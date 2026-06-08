@@ -1,8 +1,14 @@
+
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { useAuth } from '../App';
 
 export default function SellCar() {
   const navigate = useNavigate();
+  const { isLoggedIn, userRole } = useAuth();
+
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
+  if (userRole !== 'seller') return <Navigate to="/" replace />;
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     brand: '',

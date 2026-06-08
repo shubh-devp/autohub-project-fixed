@@ -1,11 +1,14 @@
+
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { isCarSaved, saveCarId, unsaveCarId } from '../../data/savedCarsStorage';
+import { useAuth } from '../../App';
 
 export default function VehicleCard({ car, onViewDetails, onUnsave }) {
   const [isSaved, setIsSaved] = useState(() => isCarSaved(car?.id));
   const [imgSrc, setImgSrc] = useState(car?.image);
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   if (!car) return null;
 
@@ -15,6 +18,10 @@ export default function VehicleCard({ car, onViewDetails, onUnsave }) {
   const handleSave = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
     if (isSaved) {
       unsaveCarId(car.id);
       setIsSaved(false);
@@ -135,5 +142,3 @@ export default function VehicleCard({ car, onViewDetails, onUnsave }) {
     </Link>
   );
 }
-
-

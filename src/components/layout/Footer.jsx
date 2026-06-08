@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../App';
 
 export default function Footer() {
+  const { isLoggedIn, userRole } = useAuth();
   return (
     <footer className="bg-slate-900 text-slate-100 border-t border-slate-800">
       {/* Main Footer Context Layout Block Grid */}
@@ -62,9 +64,17 @@ export default function Footer() {
           <div className="flex flex-col space-y-3">
             <h3 className="font-bold text-xs uppercase tracking-widest text-slate-400">For Sellers</h3>
             <ul className="space-y-2 text-xs font-semibold">
-              <li><Link to="/sell" className="text-slate-400 hover:text-white transition-colors">Sell Your Car</Link></li>
+              {isLoggedIn && userRole === 'seller' ? (
+                <>
+                  <li><Link to="/sell" className="text-slate-400 hover:text-white transition-colors">Sell Your Car</Link></li>
+                  <li><Link to="/seller-dashboard" className="text-slate-400 hover:text-white transition-colors">Seller Dashboard</Link></li>
+                </>
+              ) : (
+                <>
+                  <li><Link to="/register" className="text-slate-400 hover:text-white transition-colors">Become a Seller</Link></li>
+                </>
+              )}
               <li><Link to="/bulk-upload" className="text-slate-400 hover:text-white transition-colors">Bulk Inventory Upload</Link></li>
-              <li><Link to="/seller-dashboard" className="text-slate-400 hover:text-white transition-colors">Seller Dashboard</Link></li>
               <li><Link to="/pricing-guide" className="text-slate-400 hover:text-white transition-colors">Market Valuation Evaluation Guide</Link></li>
             </ul>
           </div>

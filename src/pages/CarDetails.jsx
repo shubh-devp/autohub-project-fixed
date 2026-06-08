@@ -1,11 +1,14 @@
+
 import { useState } from 'react';
 import { mockCars } from '../data/mockData';
-import { useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { isCarSaved, saveCarId, unsaveCarId } from '../data/savedCarsStorage';
+import { useAuth } from '../App';
 
 export default function CarDetails(){
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isLoggedIn, userRole } = useAuth();
  const car = mockCars.find((c) => c.id === parseInt(id)) || mockCars[0];
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(() => isCarSaved(car.id));
@@ -65,6 +68,7 @@ const calculateEMI = () => {
           </h1>
           <button
             onClick={() => {
+              if (!isLoggedIn) { navigate('/login'); return; }
               if (isSaved) { unsaveCarId(car.id); setIsSaved(false); }
               else { saveCarId(car.id); setIsSaved(true); }
             }}
@@ -211,12 +215,21 @@ const calculateEMI = () => {
               
               <div className="space-y-3">
                 <button
-                  onClick={() => setIsContactOpen(true)}
+                  onClick={() => {
+                    if (!isLoggedIn) { navigate('/login'); return; }
+                    setIsContactOpen(true);
+                  }}
                   className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition shadow-sm text-sm"
                 >
                   Contact Seller
                 </button>
-                <button className="w-full border border-slate-300 text-slate-700 bg-white py-3 rounded-lg font-bold hover:bg-slate-50 hover:border-slate-400 transition text-sm">
+                <button
+                  onClick={() => {
+                    if (!isLoggedIn) { navigate('/login'); return; }
+                    setIsContactOpen(true);
+                  }}
+                  className="w-full border border-slate-300 text-slate-700 bg-white py-3 rounded-lg font-bold hover:bg-slate-50 hover:border-slate-400 transition text-sm"
+                >
                   Make an Offer
                 </button>
               </div>

@@ -65,7 +65,7 @@ function AppLayout() {
           <Route path="/cars"     element={<CarListing />} />
           <Route path="/cars/:id" element={<CarDetails />} />
           <Route path="/compare"  element={<CompareCars />} />
-          <Route path="/sell"     element={<SellCar />} />
+          
           <Route path="/login"    element={<Login />} />
           <Route path="/register" element={<Register />} />
 
@@ -98,25 +98,32 @@ function AppLayout() {
           />     
 
           {/* Protected – Seller */}
-          <Route
+ <Route
+  path="/sell"
+  element={
+    isLoggedIn && userRole === "seller"
+      ? <SellCar />
+      : <Navigate to="/login" replace />
+  }
+/>
+
+<Route
   path="/seller-dashboard"
   element={
-    <ProtectedRoute allowedRoles={['seller']}>
-      <SellerDashboard />
-    </ProtectedRoute>
+    isLoggedIn && userRole === "seller"
+      ? <SellerDashboard />
+      : <Navigate to="/login" replace />
   }
 />
 
-
-          <Route
+<Route
   path="/seller-listings"
   element={
-    <ProtectedRoute allowedRoles={['seller']}>
-      <SellerListings />
-    </ProtectedRoute>
+    isLoggedIn && userRole === "seller"
+      ? <SellerListings />
+      : <Navigate to="/login" replace />
   }
 />
-
 <Route
   path="/seller-offers"
   element={
@@ -193,4 +200,3 @@ export default function App() {
     </AuthContext.Provider>
   );
 }
-

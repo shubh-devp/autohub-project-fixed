@@ -1,10 +1,16 @@
+
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../App';
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, isLoggedIn, userRole } = useAuth();
   const navigate = useNavigate();
+
+  // Already authenticated — send to the right dashboard
+  if (isLoggedIn) {
+    return <Navigate to={userRole === 'seller' ? '/seller-dashboard' : '/buyer-dashboard'} replace />;
+  }
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -34,14 +40,7 @@ export default function Login() {
     setLoading(true);
     setTimeout(() => {
       if (formData.password.length >= 6) {
-        let role = 'buyer';
-
-        if (formData.email.includes('seller')) {
-          role = 'seller';
-        }
-        if (formData.email.includes('admin')) {
-          role = 'admin';
-        }
+        const role = formData.email.toLowerCase().includes('seller') ? 'seller' : 'buyer';
 
         login({
           id: 'user_' + Date.now(),
@@ -50,13 +49,7 @@ export default function Login() {
           name: formData.email.split('@')[0],
         });
 
-        if (role === 'seller') {
-          navigate('/seller-dashboard');
-        } else if (role === 'admin') {
-          navigate('/admin-dashboard');
-        } else {
-          navigate('/buyer-dashboard');
-        }
+        navigate(role === 'seller' ? '/seller-dashboard' : '/buyer-dashboard');
       } else {
         setError('Invalid matching identification sequence or credentials.');
       }

@@ -1,10 +1,15 @@
+
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../App';
 
 export default function Register() {
-  const { login } = useAuth();
+  const { login, isLoggedIn, userRole } = useAuth();
   const navigate = useNavigate();
+
+  if (isLoggedIn) {
+    return <Navigate to={userRole === 'seller' ? '/seller-dashboard' : '/buyer-dashboard'} replace />;
+  }
 
   const [formData, setFormData] = useState({
     name: '', 
@@ -217,4 +222,3 @@ export default function Register() {
     </div>
   );
 }
-

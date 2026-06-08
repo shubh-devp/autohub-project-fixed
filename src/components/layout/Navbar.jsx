@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -6,8 +7,6 @@ const CITIES = ['Mumbai', 'Delhi', 'Bangalore', 'Pune'];
 const NAV_LINKS = {
   guest: [
     { label: 'Buy Cars', to: '/cars' },
-    { label: 'Sell Car', to: '/sell' },
-    
   ],
   buyer: [
     { label: 'Browse Cars', to: '/cars' },
