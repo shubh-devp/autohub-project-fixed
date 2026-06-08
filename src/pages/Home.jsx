@@ -36,7 +36,7 @@ export default function Home() {
   const displayedCars = hasSearched ? searchResults : mockCars.slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-200">
       {/* Hero Section with Fixed Background Overlay Layout */}
       <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-16 md:py-24 px-4 md:px-8 overflow-hidden">
         <img
@@ -65,7 +65,7 @@ export default function Home() {
             <div
               key={type.name}
               onClick={() => navigate('/cars')}
-              className="bg-white rounded-lg p-6 text-center hover:shadow-md transition border border-slate-100 cursor-pointer"
+              className="bg-white rounded-lg p-6 text-center hover:shadow-md transition border border-slate-250 cursor-pointer"
             >
               <div className="w-16 h-16 bg-blue-50 rounded-lg mx-auto mb-4 flex items-center justify-center">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5">
@@ -135,3 +135,4 @@ export default function Home() {
     </div>
   );
 }
+

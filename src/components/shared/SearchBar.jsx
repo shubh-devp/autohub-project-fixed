@@ -69,3 +69,4 @@ export default function SearchBar({ onSearch, isHeroVariant = false }) {
     </form>
   );
 }
+

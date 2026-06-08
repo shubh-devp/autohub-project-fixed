@@ -51,15 +51,15 @@ export default function SellerOffers() {
         </div>
 
         {/* Tabular Layout section */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-150 bg-slate-50/50">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
             <h3 className="text-sm font-bold text-slate-800">Active Offers Log</h3>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="border-b border-slate-150 bg-slate-50/30 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wider">
                   <th className="text-left p-4 pl-6">Verified Buyer</th>
                   <th className="text-left p-4">Vehicle Description</th>
                   <th className="text-left p-4">Listed Value</th>
@@ -71,7 +71,7 @@ export default function SellerOffers() {
               <tbody className="divide-y divide-slate-100 text-slate-700">
                 {offers.length > 0 ? (
                   offers.map((offer) => (
-                    <tr key={offer.id} className="hover:bg-slate-50/40 transition">
+                    <tr key={offer.id} className="hover:bg-slate-50 transition">
                       <td className="p-4 pl-6 font-semibold text-slate-900">{offer.buyer_name}</td>
                       <td className="p-4 font-medium text-slate-600">{offer.car_name}</td>
                       <td className="p-4 text-slate-400 line-through">
@@ -114,7 +114,7 @@ export default function SellerOffers() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center py-12 text-slate-400 font-medium">
+                    <td colSpan={5} className="text-center py-12 text-slate-400 font-medium">
                       No purchasing offers found for your listed inventory.
                     </td>
                   </tr>
