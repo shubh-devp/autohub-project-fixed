@@ -6,11 +6,11 @@ import Sidebar from '../../components/layout/Sidebar';
 export default function Profile() {
   const { userRole, userData } = useAuth();
   
-  // Fix: Safe dynamic fallback checks mapping user state contextual signatures natively
+  const fallbackProfile = userRole === 'seller' ? mockSellerProfile : mockBuyerProfile;
   const [formData, setFormData] = useState({
-    name: userData?.name || mockBuyerProfile.name || '',
-    email: userData?.email || mockBuyerProfile.email || '',
-    phone: userData?.phone || mockBuyerProfile.phone || '',
+    name: userData?.name || fallbackProfile.name || '',
+    email: userData?.email || fallbackProfile.email || '',
+    phone: userData?.phone || fallbackProfile.phone || '',
     location: userData?.location || 'Mumbai',
     notifications: { 
       offers: true, 
@@ -193,4 +193,3 @@ export default function Profile() {
     </div>
   );
 }
-

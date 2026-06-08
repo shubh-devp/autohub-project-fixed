@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { mockCars } from '../data/mockData';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -217,18 +216,20 @@ const calculateEMI = () => {
                 <button
                   onClick={() => {
                     if (!isLoggedIn) { navigate('/login'); return; }
+                    if (userRole === 'seller') return;
                     setIsContactOpen(true);
                   }}
-                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition shadow-sm text-sm"
+                  className={`w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition shadow-sm text-sm ${userRole === 'seller' ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   Contact Seller
                 </button>
                 <button
                   onClick={() => {
                     if (!isLoggedIn) { navigate('/login'); return; }
+                    if (userRole === 'seller') return;
                     setIsContactOpen(true);
                   }}
-                  className="w-full border border-slate-300 text-slate-700 bg-white py-3 rounded-lg font-bold hover:bg-slate-50 hover:border-slate-400 transition text-sm"
+                  className={`w-full border border-slate-300 text-slate-700 bg-white py-3 rounded-lg font-bold hover:bg-slate-50 hover:border-slate-400 transition text-sm ${userRole === 'seller' ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   Make an Offer
                 </button>
@@ -259,10 +260,29 @@ const calculateEMI = () => {
                     <p className="text-xs text-slate-400 font-medium">Individual Verified Seller</p>
                   </div>
                 </div>
-                <div className="text-xs font-medium text-slate-600 space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <p className="flex items-center gap-2"><span>📞</span> +91 9876543210</p>
-                  <p className="flex items-center gap-2"><span>📍</span> Mumbai, India</p>
-                </div>
+                {isLoggedIn && userRole !== 'seller' ? (
+                  <div className="text-xs font-medium text-slate-600 space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <p className="flex items-center gap-2"><span>📞</span> +91 9876543210</p>
+                    <p className="flex items-center gap-2"><span>📍</span> Mumbai, India</p>
+                  </div>
+                ) : (
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-2">
+                    <p className="flex items-center gap-2 text-xs text-slate-400">
+                      <span>📞</span>
+                      <span className="blur-sm select-none tracking-widest">+91 98765 43210</span>
+                    </p>
+                    <p className="flex items-center gap-2 text-xs text-slate-400">
+                      <span>📍</span>
+                      <span className="blur-sm select-none tracking-widest">City, India</span>
+                    </p>
+                    <button
+                      onClick={() => navigate('/login')}
+                      className="mt-2 w-full text-xs font-bold text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg py-1.5 hover:bg-indigo-100 transition"
+                    >
+                      🔒 Login to view contact details
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

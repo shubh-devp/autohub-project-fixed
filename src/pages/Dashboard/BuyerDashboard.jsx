@@ -53,13 +53,15 @@ export default function BuyerDashboard() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            {buyerDashboardStats?.map((stat, idx) => (
+            {buyerDashboardStats?.map((stat, idx) => {
+              const displayValue = stat.label === 'Saved Cars' ? savedCars.length : stat.value;
+              return (
               <div key={idx} className="bg-white rounded-xl p-5 border border-slate-200/60 shadow-sm flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                     {stat.label}
                   </span>
-                  <p className="text-2xl font-black text-slate-900">{stat.value}</p>
+                  <p className="text-2xl font-black text-slate-900">{displayValue}</p>
                   {stat.trend && <p className="text-xs font-bold text-emerald-600 mt-1">📈 {stat.trend}</p>}
                 </div>
                 <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center shrink-0 border border-blue-100/50">
@@ -81,7 +83,7 @@ export default function BuyerDashboard() {
                   )}
                 </div>
               </div>
-            ))}
+            );})}
           </div>
 
           {/* Tabs */}
@@ -183,4 +185,3 @@ export default function BuyerDashboard() {
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   sellerDashboardStats, 
   sellerListings, 
@@ -11,6 +11,7 @@ import { useAuth } from '../../App';
 
 export default function SellerDashboard() {
   const { userData } = useAuth();
+  const navigate = useNavigate();
   const displayName = userData?.name || mockSellerProfile.name || 'Seller';
   const [activeTab, setActiveTab] = useState('listings');
   const [offersList, setOffersList] = useState(sellerOffers);
@@ -127,7 +128,10 @@ export default function SellerDashboard() {
                           </span>
                         </td>
                         <td className="py-3.5 text-right pr-2">
-                          <button className="text-xs font-bold text-blue-600 hover:text-blue-800 transition">
+                          <button
+                            onClick={() => navigate(`/sell?edit=${listing.car_id}`)}
+                            className="text-xs font-bold text-blue-600 hover:text-blue-800 transition"
+                          >
                             Modify
                           </button>
                         </td>
@@ -208,4 +212,3 @@ export default function SellerDashboard() {
     </div>
   );
 }
-
