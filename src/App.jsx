@@ -119,9 +119,9 @@ function AppLayout() {
 <Route
   path="/seller-listings"
   element={
-    isLoggedIn && userRole === "seller"
-      ? <SellerListings />
-      : <Navigate to="/login" replace />
+    <ProtectedRoute allowedRoles={['seller']}>
+      <SellerListings />
+    </ProtectedRoute>
   }
 />
 <Route
@@ -167,15 +167,30 @@ function AppLayout() {
 
 // ─── Root App ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const savedAuth = JSON.parse(
+let savedAuth = {};
+
+try {
+  savedAuth = JSON.parse(
     localStorage.getItem('autohub_auth') || '{}'
   );
+} catch {
+  localStorage.removeItem('autohub_auth');
+}
 
-  const [isLoggedIn, setIsLoggedIn] = useState(savedAuth.isLoggedIn || false);
-  const [userRole, setUserRole] = useState(savedAuth.userRole || 'guest');
+const [isLoggedIn, setIsLoggedIn] = useState(
+  savedAuth?.isLoggedIn === true
+);
+const [userRole, setUserRole] = useState(
+  ['buyer', 'seller'].includes(savedAuth?.userRole)
+    ? savedAuth.userRole
+    : 'guest'
+);
   const [userData, setUserData] = useState(savedAuth.userData || null);
 
   const login = (user) => {
+     if (!['buyer', 'seller'].includes(user.role)) {
+    return;
+  }
     const authData = {
       isLoggedIn: true,
       userRole: user.role,
@@ -187,12 +202,16 @@ export default function App() {
     setUserData(user);
   };
 
-  const logout = () => {
-    localStorage.removeItem('autohub_auth');
-    setIsLoggedIn(false);
-    setUserRole('guest');
-    setUserData(null);
-  };
+const logout = () => {
+  sessionStorage.clear();
+  localStorage.removeItem('autohub_auth');
+
+  setIsLoggedIn(false);
+  setUserRole('guest');
+  setUserData(null);
+
+  window.location.replace('/login');
+};
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, userRole, userData, login, logout }}>

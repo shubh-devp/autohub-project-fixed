@@ -17,7 +17,12 @@ export default function FilterPanel({ onFilterChange, isOpen, onClose }) {
   // Custom specifications dynamic option pools
   const modelOptions = ['Nexon', 'XUV500', 'Kwid', 'City', 'Swift', 'i20'];
   const cityOptions = ['Mumbai', 'Pune', 'Hyderabad', 'Ahmedabad', 'Bangalore', 'Delhi'];
-  const yearOptions = [2024, 2023, 2022, 2021, 2020, 2019, 2018];
+  const currentYear = new Date().getFullYear();
+
+const yearOptions = Array.from(
+  { length: currentYear - 2017 },
+  (_, i) => currentYear - i
+);
 
   const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
@@ -27,10 +32,18 @@ export default function FilterPanel({ onFilterChange, isOpen, onClose }) {
     }
   };
 
-  const handlePriceChange = (e) => {
-    const value = [filters.priceRange[0], parseInt(e.target.value, 10)];
-    handleFilterChange('priceRange', value);
-  };
+const handlePriceChange = (e) => {
+  const maxPrice = parseInt(e.target.value, 10);
+
+  if (maxPrice < filters.priceRange[0]) {
+    return;
+  }
+
+  handleFilterChange('priceRange', [
+    filters.priceRange[0],
+    maxPrice,
+  ]);
+};
 
   const handleReset = () => {
     const resetFilters = {

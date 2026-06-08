@@ -4,17 +4,22 @@ import { useState } from 'react';
 export default function SearchBar({ onSearch, isHeroVariant = false }) {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Fix: Added architectural safety protection guard against undefined callback errors
-    if (typeof onSearch === 'function') {
-      onSearch(searchTerm.trim());
-    } else {
-      console.warn('SearchBar component executed a submit event without an active onSearch prop binding.');
-    }
-  };
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
+  const cleanedSearch = searchTerm
+    .trim()
+    .replace(/[<>]/g, '')
+    .slice(0, 100);
+
+  if (typeof onSearch === 'function') {
+    onSearch(cleanedSearch);
+  } else {
+    console.warn(
+      'SearchBar component executed a submit event without an active onSearch prop binding.'
+    );
+  }
+};
   // Base layout config style wrappers
   const formWrapperClass = isHeroVariant 
     ? 'w-full max-w-2xl mx-auto' 
@@ -33,6 +38,7 @@ export default function SearchBar({ onSearch, isHeroVariant = false }) {
       <div className={inputContainerClass}>
         <input
           type="text"
+          maxLength={100}
           placeholder={isHeroVariant ? "Search by brand, model, or location..." : "Search cars..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

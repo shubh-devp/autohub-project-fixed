@@ -10,6 +10,8 @@ export default function SellCar() {
   if (!isLoggedIn) return <Navigate to="/login" replace />;
   if (userRole !== 'seller') return <Navigate to="/" replace />;
   const [currentStep, setCurrentStep] = useState(1);
+  const [acceptedTerms, setAcceptedTerms] =
+  useState(false);
   const [formData, setFormData] = useState({
     brand: '',
     model: '',
@@ -40,34 +42,80 @@ const steps = [
 
   const brands = ['Maruti', 'Hyundai', 'Tata', 'Mahindra', 'Renault', 'Honda'];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
-  };
+ const handleChange = (e) => {
+  const { name } = e.target;
 
+  const value =
+    typeof e.target.value === 'string'
+      ? e.target.value.replace(/[<>]/g, '')
+      : e.target.value;
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+
+  if (errors[name]) {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: '',
+    }));
+  }
+};
 const validateStep = () => {
   const newErrors = {};
+  const currentYear = new Date().getFullYear();
 
   if (currentStep === 1) {
-    if (!formData.brand) newErrors.brand = 'Please select a brand';
-    if (!formData.model) newErrors.model = 'Please enter a model';
-    if (!formData.mileage) newErrors.mileage = 'Please enter mileage';
+    if (!formData.brand) {
+      newErrors.brand = 'Please select a brand';
+    }
+
+    if (!formData.model.trim()) {
+      newErrors.model = 'Please enter a model';
+    }
+
+    if (
+      Number(formData.year) < 1980 ||
+      Number(formData.year) > currentYear
+    ) {
+      newErrors.year = `Year must be between 1980 and ${currentYear}`;
+    }
+
+    if (!formData.mileage) {
+      newErrors.mileage = 'Please enter mileage';
+    } else if (Number(formData.mileage) < 0) {
+      newErrors.mileage = 'Mileage cannot be negative';
+    }
   }
 
   if (currentStep === 2) {
-    if (!formData.price) newErrors.price = 'Please enter a price';
+    if (!formData.price) {
+      newErrors.price = 'Please enter a price';
+    } else if (Number(formData.price) <= 0) {
+      newErrors.price = 'Price must be greater than 0';
+    }
   }
 
   if (currentStep === 4) {
+    if (!formData.name.trim()) {
+      newErrors.name = 'Please enter your name';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Please enter email';
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
+      newErrors.email = 'Enter a valid email';
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Please enter phone number';
+    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+      newErrors.phone = 'Enter a valid 10 digit mobile number';
+    }
+
     if (!formData.inspectionDate) {
       newErrors.inspectionDate = 'Please select a date';
     }
@@ -76,7 +124,16 @@ const validateStep = () => {
       newErrors.inspectionTime = 'Please select a time';
     }
   }
-
+  if (
+  formData.description.trim().length < 10
+) {
+  newErrors.description =
+    "Description must contain at least 10 characters";
+}
+if (!acceptedTerms) {
+  newErrors.terms =
+    "Please accept Terms & Conditions";
+}
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
 };
@@ -102,6 +159,28 @@ const handleNext = () => {
       navigate('/seller-dashboard');
     }
   };
+
+  const handleImageUpload = (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg"
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    alert("Only JPG and PNG images allowed");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Maximum file size is 5MB");
+    return;
+  }
+};
 
   return (
 <div className="min-h-screen bg-slate-50">
@@ -206,12 +285,19 @@ const handleNext = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.year && (
+  <p className="text-xs text-red-600 mt-1">
+    {errors.year}
+  </p>
+)}
+
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-900 mb-2">Mileage (km)</label>
                   <input
                     type="number"
+                    min="0"
                     name="mileage"
                     placeholder="e.g., 50000"
                     value={formData.mileage}
@@ -258,10 +344,13 @@ const handleNext = () => {
                 <label className="block text-sm font-semibold text-slate-900 mb-2">Description</label>
                 <textarea
                   name="description"
+                  minLength={10}
+maxLength={500}
                   placeholder="Tell us about your car's condition, features, etc."
                   rows="4"
                   value={formData.description}
                   onChange={handleChange}
+
                   className="w-full px-4 py-2 border border-slate-200 rounded-md text-base outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
                 />
               </div>
@@ -277,6 +366,7 @@ const handleNext = () => {
                 <label className="block text-sm font-semibold text-slate-900 mb-2">Expected Price (₹)</label>
                 <input
                   type="number"
+                  min="1"
                   name="price"
                   placeholder="e.g., 550000"
                   value={formData.price}
@@ -367,9 +457,17 @@ const handleNext = () => {
                 <input
                   type="tel"
                   name="phone"
+                  required
+ onChange={(e) =>
+  setFormData({
+    ...formData,
+    phone: e.target.value.replace(/\D/g, "").slice(0,10)
+  })
+}
+  maxLength={10}
                   placeholder="Enter your phone number"
                   value={formData.phone}
-                  onChange={handleChange}
+                  // onChange={handleChange}
                   className={`w-full px-4 py-2 border rounded-md text-base outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition ${
                     errors.phone ? 'border-red-600 ring-1 ring-red-600' : 'border-slate-200'
                   }`}
